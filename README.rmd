@@ -2,7 +2,7 @@
 title: "Taller"
 author: "Norman Simón Rodríguez"
 date: "23 de octubre de 2017"
-output: github_document
+output: html_document
 ---
 
 ```{r setup, include=FALSE}
@@ -50,6 +50,38 @@ plot(dT0, main="Ingresos sin intervención", xlab="Pesos per cápita", ylim=rang
     abline(v=mean(T2$ingresos), lwd=3, col="blue")
 ```
 
+
+Las medias son:
+```{r}
+medias <- c(mean(T0$ingresos), mean(T1$ingresos), mean(T2$ingresos))
+medias <- rbind(c("T0", "T1", "T2"), medias)
+```
+
+## Muestreo aleatorio
+
+El muestreo aleatorio es fácil de hacer. Sólo usamos la función `sample()`:
+
+```{r}
+muestraid <- sample(T0$id, size=n/10, replace=F)
+muestraT0 <- subset(T0, T0$id %in% muestraid)
+muestraT1 <- subset(T1, T1$id %in% muestraid)
+muestraT2 <- subset(T2, T2$id %in% muestraid)
+```
+
+La tabla de balance
+
+```{r}
+apply(T0, 2, mean)-apply(muestraT0, 2, mean)
+```
+
+
+
+# Una RCT (asignación aleatoria)
+
+El primer paso para 
+
+## La verdad
+
 La notación es la siguiente:
 $$
 Y=ingreso\\
@@ -68,9 +100,8 @@ $$
 
 La función ingreso es la siguiente (para $t>0$):
 $$
-Y_t=X_1 [ aX_2  X_3  (X_4+b) - cX_3X_5 + dX_6^3 + Y_{t-1}X_7^2] + eX_8  (X_4+b) + Y_{t-1}X_{9, t-1} - X_{10} \Delta X_2 \\
-
-X_9=\frac{Y_t(1+gX_{11})}{h\max(Y_t)}
+Y_t=X_1 [ aX_2  X_3  (X_4+b) - cX_3X_5 + dX_6^3 + Y_{t-1}X_7^2] + eX_8  (X_4+b) + Y_{t-1}X_{9, t-1} - X_{10} \Delta X_2\\
+X_9=\frac{Y_t(1+gX_{11})}{h \max(Y_t)}
 $$
-
+asd
 
