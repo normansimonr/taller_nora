@@ -1,0 +1,40 @@
+---
+title: "Taller"
+author: "Norman Simón Rodríguez"
+date: "23 de octubre de 2017"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+## Preliminares
+
+Vamos a cargar nuestros datos (son datos creados a través de una simulación). Debemos definir el tamaño de la muestra:
+
+```{r}
+n <- 10000
+source("creador_datos.R")
+```
+
+Y ahora vamos a crear una función para hacer que pase el tiempo sobre los datos (un año a la vez). La función se llamar `pasartiempo()`:
+
+```{r}
+source("pasartiempo_def.R")
+```
+
+Pasamos un año:
+
+```{r}
+T1 <- pasartiempo(T0)
+```
+
+Y pasamos otro año:
+```{r}
+T2 <- pasartiempo(T2)
+```
+
+Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas).
+
