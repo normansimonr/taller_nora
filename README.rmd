@@ -6,7 +6,7 @@ output: github_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, eval=F)
 ```
 
 
@@ -25,16 +25,52 @@ Y ahora vamos a crear una función para hacer que pase el tiempo sobre los datos
 source("pasartiempo_def.R")
 ```
 
-Pasamos un año:
+Pasamos unos años:
 
 ```{r}
 T1 <- pasartiempo(T0)
-```
-
-Y pasamos otro año:
-```{r}
 T2 <- pasartiempo(T1)
 ```
 
-Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas).
+Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas). Miremos la distribución de ingresos en cada tiempo.
+
+```{r}
+dT0 <- density(T0$ingresos)
+dT1 <- density(T1$ingresos)
+dT2 <- density(T2$ingresos)
+
+plot(dT0, main="Ingresos sin intervención", xlab="Pesos per cápita", ylim=range(dT0$y, dT1$y, dT2$y), 
+     xlim=range(dT0$x, dT1$x, dT2$x)/5, 
+     lwd=3, col="black")
+  abline(v=mean(T0$ingresos), lwd=3, col="black")
+
+  lines(dT1, lwd=3, col="red")
+    abline(v=mean(T1$ingresos), lwd=3, col="red")
+  lines(dT2, lwd=3, col="blue")
+    abline(v=mean(T2$ingresos), lwd=3, col="blue")
+```
+
+La notación es la siguiente:
+$$
+Y=ingreso\\
+X_1=ocupado\\
+X_2=anioseduc\\
+X_3=salariounitario \, (promedio\, del\, mercado)\\
+X_4=conexiones\\
+X_5=sexo\\
+X_6=nivelingles
+X_7=estadosalud\\
+X_8=empresario\\
+X_9=marginpropS\\
+X_{10}=costoeduc \, (promedio\, del\, mercado)\\
+X_{11}=cursofinanzas
+$$
+
+La función ingreso es la siguiente (para $t>0$):
+$$
+Y_t=X_1 [ aX_2  X_3  (X_4+b) - cX_3X_5 + dX_6^3 + Y_{t-1}X_7^2] + eX_8  (X_4+b) + Y_{t-1}X_{9, t-1} - X_{10} \Delta X_2 \\
+
+X_9=\frac{Y_t(1+gX_{11})}{h\max(Y_t)}
+$$
+
 
