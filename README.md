@@ -1,2 +1,34 @@
-# taller_nora
-Ejercicios en R para ilustrar los métodos de evaluación de impacto de políticas públicas
+Taller
+================
+Norman Simón Rodríguez
+23 de octubre de 2017
+
+Preliminares
+------------
+
+Vamos a cargar nuestros datos (son datos creados a través de una simulación). Debemos definir el tamaño de la muestra:
+
+``` r
+n <- 10000
+source("creador_datos.R")
+```
+
+Y ahora vamos a crear una función para hacer que pase el tiempo sobre los datos (un año a la vez). La función se llamar `pasartiempo()`:
+
+``` r
+source("pasartiempo_def.R")
+```
+
+Pasamos un año:
+
+``` r
+T1 <- pasartiempo(T0)
+```
+
+Y pasamos otro año:
+
+``` r
+T2 <- pasartiempo(T1)
+```
+
+Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas).

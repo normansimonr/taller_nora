@@ -33,7 +33,7 @@ T1 <- pasartiempo(T0)
 
 Y pasamos otro año:
 ```{r}
-T2 <- pasartiempo(T2)
+T2 <- pasartiempo(T1)
 ```
 
 Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas).
