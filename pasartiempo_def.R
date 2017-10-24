@@ -13,9 +13,12 @@ pasartiempo <- function(A) {
   }
   
 
-  B$ocupado <- sample(c(1,0), replace=TRUE, size=n, prob=c(0.85,0.15))
+  B$ocupado <- sample(c(1,0), replace=TRUE, size=NROW(B), prob=c(0.85,0.15))
   B$estadosalud <- jitter(1 - (B$edad / max(B$edad)), amount=0.15)
  
+  #Función propensión marginal a ahorrar
+  B$marginpropS <- B$ingresos*(1+(B$cursofinanzas/2))/(1.1*max(B$ingresos))
+  
   #Función ingresos
   B$ingresos <- B$ocupado*( # Si está empleado, tiene estos ingresos, si no, tiene cero por este componente.
                   B$anioseduc*2*mean(B$salariounitario)*(B$conexiones+1)
@@ -28,7 +31,7 @@ pasartiempo <- function(A) {
                 - ((B$anioseduc - A$anioseduc)*costoeduc) # Restando lo que la persona pagó para educarse.
   
 
-  #Función propensión marginal a ahorrar
+  #Función propensión marginal a ahorrar (recalculando)
   B$marginpropS <- B$ingresos*(1+(B$cursofinanzas/2))/(1.1*max(B$ingresos))
   
   return(B)  

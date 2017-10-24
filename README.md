@@ -29,37 +29,179 @@ T2 <- pasartiempo(T1)
 Notemos que hasta este momento no hemos implementado ninguna intervención (curso de finanzas). Miremos la distribución de ingresos en cada tiempo.
 
 ``` r
-dT0 <- density(T0$ingresos)
-dT1 <- density(T1$ingresos)
-dT2 <- density(T2$ingresos)
-
-plot(dT0, main="Ingresos sin intervención", xlab="Pesos per cápita", ylim=range(dT0$y, dT1$y, dT2$y), 
-     xlim=range(dT0$x, dT1$x, dT2$x)/5, 
-     lwd=3, col="black")
-  abline(v=mean(T0$ingresos), lwd=3, col="black")
-
-  lines(dT1, lwd=3, col="red")
-    abline(v=mean(T1$ingresos), lwd=3, col="red")
-  lines(dT2, lwd=3, col="blue")
-    abline(v=mean(T2$ingresos), lwd=3, col="blue")
+source("graf_ing_sin.R")
 ```
 
-La notación es la siguiente:
-$$
-Y=ingreso\\\\
-X\_1=ocupado\\\\
-X\_2=anioseduc\\\\
-X\_3=salariounitario \\, (promedio\\, del\\, mercado)\\\\
-X\_4=conexiones\\\\
-X\_5=sexo\\\\
-X\_6=nivelingles
-X\_7=estadosalud\\\\
-X\_8=empresario\\\\
-X\_9=marginpropS\\\\
-X\_{10}=costoeduc \\, (promedio\\, del\\, mercado)\\\\
-X\_{11}=cursofinanzas
-$$
+Una RCT
+=======
 
-La función ingreso es la siguiente (para *t* &gt; 0): $$ Y\_t=X\_1 \[ aX\_2 X\_3 (X\_4+b) - cX\_3X\_5 + dX\_6^3 + Y\_{t-1}X\_7^2\] + eX\_8 (X\_4+b) + Y\_{t-1}X\_{9, t-1} - X\_{10} X\_2 \\
+Muestreo aleatorio
+------------------
 
-X\_9= $$
+El muestreo aleatorio es fácil de hacer. Sólo usamos la función `sample()` y la función `subset()`. Por ejemplo:
+
+``` r
+muestraid <- sample(T0$id, size=n/5, replace=F)
+muestraT0 <- subset(T0, T0$id %in% muestraid)
+muestraT1 <- subset(T1, T2$id %in% muestraid)
+muestraT2 <- subset(T1, T2$id %in% muestraid)
+```
+
+Asignación aleatoria
+--------------------
+
+Vamos a hacer una asignación aleatoria. A diferencia de la última vez, que hicimos una aleatorización completa, hoy haremos una aleatorización simple. Debemos partir la muestra en T=0 en dos submuestras, una para tratamiento y otra para control. Creamos un vector dummy:
+
+``` r
+estatus <- sample(c(0,1), size=NROW(muestraT0), prob=c(0.5, 0.5), replace=T)
+```
+
+Y lo pegamos a la muestra:
+
+``` r
+muestraT0$estatus <- estatus
+```
+
+Luego partimos la muestra según estatus:
+
+``` r
+tratamientoT0 <- subset(muestraT0, muestraT0$estatus==1)
+controlT0 <- subset(muestraT0, muestraT0$estatus==0)
+
+NROW(controlT0)
+NROW(tratamientoT0)
+```
+
+Vamos a implementar el tratamiento en el grupo de tratamiento:
+
+``` r
+tratamientoT0$cursofinanzas <- 1
+```
+
+Y vamos a hacer que pase el tiempo en ambos grupos:
+
+``` r
+tratamientoT1 <- pasartiempo(tratamientoT0)
+controlT1 <- pasartiempo(controlT0)
+```
+
+¿Cuál es el ingreso promedio en el grupo de tratamiento en T=1? ¿Y en el grupo de control?
+
+``` r
+mean(tratamientoT1$ingresos)
+mean(controlT1$ingresos)
+```
+
+O sea que el impacto estimado es:
+
+``` r
+Igorro <- mean(tratamientoT1$ingresos)-mean(controlT1$ingresos)
+Igorro
+```
+
+¿Qué tan seguros estamos de que la diferencia es significativa? Usamos un test t para averiguarlo:
+
+``` r
+t.test(x=tratamientoT1$ingresos, y=controlT1$ingresos, alternative=c("two.sided"))
+```
+
+Vamos a guardar los resultados:
+
+``` r
+resultados <- matrix(NA,ncol=0, nrow=2)
+rownames(resultados) <- c("Método", "Valor")
+resultados <- data.frame(resultados)
+resultados$rct <- c("RCT", Igorro)
+```
+
+La verdad
+=========
+
+La verdad la encontramos comparando el ingreso promedio del grupo de tratamiento en T=1 con el ingreso promedio de la población en T=1 sin intervención (el contrafactual teórico):
+
+``` r
+I <- mean(tratamientoT1$ingresos)-mean(T1$ingresos)
+resultados$verdad <- c("VERDAD", I)
+```
+
+Diferencias simples
+===================
+
+Tomemos nuestra muestra aleatoria original, pero no vamos a hacer asignación aleatoria, sino asignación por orden de llegada:
+
+``` r
+muestraT0$estatus <- rep(c(1,0), each=NROW(muestraT0)/2)
+tratamientoT0 <- subset(muestraT0, muestraT0$estatus==1)
+controlT0 <- subset(muestraT0, muestraT0$estatus==0)
+tratamientoT0$cursofinanzas <- 1
+controlT0$cursofinanzas <- 0
+```
+
+Hacemos correr el tiempo:
+
+``` r
+tratamientoT1 <- pasartiempo(tratamientoT0)
+controlT1 <- pasartiempo(controlT0)
+```
+
+O sea que el impacto estimado es:
+
+``` r
+Igorro <- mean(tratamientoT1$ingresos)-mean(controlT1$ingresos)
+Igorro
+```
+
+¿Qué tan seguros estamos de que la diferencia es significativa? Usamos un test t para averiguarlo:
+
+``` r
+t.test(x=tratamientoT1$ingresos, y=controlT1$ingresos, alternative=c("two.sided"))
+```
+
+Vamos a guardar los resultados:
+
+``` r
+resultados$ds <- c("DS", Igorro)
+```
+
+Diferencias en diferencias
+==========================
+
+Digamos que queremos controlar las condiciones iniciales, suponiendo que las tendencias se habrían mantenido paralelas. Simplemente, hago dos pre-post:
+
+``` r
+Igorro <- (mean(tratamientoT1$ingresos)-mean(tratamientoT0$ingresos)) - (mean(controlT1$ingresos)-mean(controlT0$ingresos))
+Igorro
+```
+
+Vamos a guardar los resultados:
+
+``` r
+resultados$dd <- c("DD", Igorro)
+```
+
+Regresión múltiple
+==================
+
+Ahora vamos a hacer una regresión múltiple (de una manera un poco irresponsable) con todas las covariables (sin las variables omitidas):
+
+``` r
+datos <- rbind(tratamientoT1,controlT1)
+regr <- lm(ingresos ~ ocupado + anioseduc + sexo + edad + empresario + cursofinanzas + salariounitario + costoeduc, data=datos)
+summary(regr)
+```
+
+Vamos a guardar los resultados:
+
+``` r
+Igorro <- summary(regr)$coefficients[7,1]
+resultados$rm <- c("RM", Igorro)
+```
+
+La tabla de balance:
+
+``` r
+options("scipen"=100, "digits"=4)
+apply(T0, 2, mean)-apply(muestraT0, 2, mean)
+```
+
+Para determinar qué

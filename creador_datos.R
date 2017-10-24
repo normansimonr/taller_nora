@@ -34,7 +34,7 @@ chocolatinasdia <- rpois(n, lambda=2)
 
 marginpropS <- ingresos*(1+(cursofinanzas/2))/(1.1*max(ingresos))
 
-cedula <- seq(from=4306, to=4306+n-1, by=1)
+cedula <- seq(from=4306, to=4306+n-1, by=1); cedula <- sample(cedula)
 
 # Variable explicada
 

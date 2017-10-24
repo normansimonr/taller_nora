@@ -1,0 +1,30 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\author{Norman Simón Rodríguez}
+\begin{document}
+La notación es la siguiente:
+\begin{align*}
+Y&=ingreso\\
+X_1&=ocupado\\
+X_2&=anioseduc\\
+X_3&=salariounitario \, (promedio\, del\, mercado)\\
+X_4&=conexiones\\
+X_5&=sexo\\
+X_6&=nivelingles\\
+X_7&=estadosalud\\
+X_8&=empresario\\
+X_9&=marginpropS\\
+X_{10}&=costoeduc \, (promedio\, del\, mercado)\\
+X_{11}&=cursofinanzas
+\end{align*}
+
+
+La función ingreso es la siguiente (para $t>0$):
+\begin{align*}
+Y_t&=X_1 [ aX_2  X_3  (X_4+b) - cX_3X_5 + dX_6^3 + Y_{t-1}X_7^2] + eX_8  (X_4+b) + Y_{t-1}X_{9, t-1} - X_{10} \Delta X_2\\
+X_9&=\frac{Y_t(1+gX_{11})}{h \max(Y_t)}
+\end{align*}
+\end{document}
