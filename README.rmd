@@ -99,12 +99,6 @@ Igorro <- mean(tratamientoT1$ingresos)-mean(controlT1$ingresos)
 Igorro
 ```
 
-¿Qué tan seguros estamos de que la diferencia es significativa? Usamos un test t para averiguarlo:
-
-```{r}
-t.test(x=tratamientoT1$ingresos, y=controlT1$ingresos, alternative=c("two.sided"))
-```
-
 Vamos a guardar los resultados:
 
 ```{r}
@@ -148,12 +142,6 @@ Igorro <- mean(tratamientoT1$ingresos)-mean(controlT1$ingresos)
 Igorro
 ```
 
-¿Qué tan seguros estamos de que la diferencia es significativa? Usamos un test t para averiguarlo:
-
-```{r}
-t.test(x=tratamientoT1$ingresos, y=controlT1$ingresos, alternative=c("two.sided"))
-```
-
 Vamos a guardar los resultados:
 
 ```{r}
@@ -190,15 +178,3 @@ Vamos a guardar los resultados:
 Igorro <- summary(regr)$coefficients[7,1]
 resultados$rm <- c("RM", Igorro)
 ```
-
-
-
-La tabla de balance:
-
-```{r}
-options("scipen"=100, "digits"=4)
-apply(T0, 2, mean)-apply(muestraT0, 2, mean)
-```
-
-Para determinar qué
-
