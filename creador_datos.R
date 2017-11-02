@@ -32,6 +32,8 @@ nivelingles <- sort(sample(c(0,1,2,3), replace=TRUE, size=n, prob=c(0.4,0.3, 0.2
 
 chocolatinasdia <- rpois(n, lambda=2)
 
+ingresos <- sort(rlnorm(n, meanlog = 0, sdlog = 0.5)*1000000)
+
 marginpropS <- ingresos*(1+(cursofinanzas/2))/(1.1*max(ingresos))
 
 cedula <- seq(from=4306, to=4306+n-1, by=1); cedula <- sample(cedula)
